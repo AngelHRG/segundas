@@ -1,0 +1,288 @@
+<?php
+include "conexion.php";
+
+// Obtener usuarios
+$query  = "SELECT id, nombre, correo, edad FROM usuarios ORDER BY id";
+$result = mysqli_query($conexion, $query);
+
+$usuarios = [];
+if ($result && mysqli_num_rows($result) > 0) {
+    $usuarios = mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+mysqli_close($conexion);
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Sistema de Registro de Usuarios</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(to bottom, #f0f4f8, #e2e8f0);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        .pagina {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .barra-lateral {
+            width: 280px;
+            background: #1a365d;
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .barra-lateral h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .barra-lateral p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 2px;
+            margin-bottom: 12px;
+        }
+
+        .menu {
+            margin-top: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu li {
+            margin-bottom: 6px;
+        }
+
+        .menu a, .menu a:visited {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .menu a:hover {
+            background-color: #2c5282;
+        }
+
+        .contenido {
+            flex: 1;
+            padding: 40px 30px;
+            background: #f8fafc;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1a365d;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .tarjeta {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .tarjeta h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 4px;
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+            outline: none;
+        }
+
+        button {
+            margin-top: 16px;
+            padding: 10px 14px;
+            background-color: #1a365d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #2c5282;
+            transform: scale(1.02);
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        thead th {
+            background: #1a365d;
+            color: white;
+            font-weight: 500;
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 2px solid #2c5282;
+        }
+
+        tbody td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #4a5568;
+        }
+
+        tbody tr:hover {
+            background-color: #edf2f7;
+        }
+
+        .acciones a, .acciones a:visited {
+            color: #e53e3e;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .acciones a:hover {
+            text-decoration: underline;
+        }
+
+        .pie {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 13px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="pagina">
+        <!-- Barra lateral -->
+        <aside class="barra-lateral">
+            <h2>Sistema de Registro</h2>
+            <p>Sistema de Registro de Usuarios</p>
+            <ul class="menu">
+                <li><a href="#form">Formulario</a></li>
+                <li><a href="#tabla">Lista de usuarios</a></li>
+            </ul>
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="contenido">
+            <h1>Sistema de Registro de Usuarios</h1>
+
+            <!-- Tarjeta del formulario -->
+            <div class="tarjeta" id="form">
+                <h2>Registro de usuario</h2>
+                <form action="guardar.php" method="POST">
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" required />
+
+                    <label>Correo electrónico</label>
+                    <input type="email" name="correo" required />
+
+                    <label>Edad</label>
+                    <input type="number" name="edad" min="1" max="120" required />
+
+                    <button type="submit">Guardar usuario</button>
+                </form>
+            </div>
+
+            <!-- Tarjeta de listado -->
+            <div class="tarjeta" id="tabla">
+                <h2>Usuarios registrados</h2>
+
+                <?php if ($usuarios): ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Edad</th>
+                                <th class="acciones">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($usuarios as $u): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($u["id"]); ?></td>
+                                    <td><?php echo htmlspecialchars($u["nombre"]); ?></td>
+                                    <td><?php echo htmlspecialchars($u["correo"]); ?></td>
+                                    <td><?php echo htmlspecialchars($u["edad"]); ?></td>
+                                    <td class="acciones">
+                                        <a href="eliminar.php?id=<?php echo $u["id"]; ?>"
+                                           onclick="return confirm('¿Eliminar este usuario?');">
+                                           Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <p>No hay usuarios registrados aún.</p>
+                <?php endif; ?>
+            </div>
+
+            <div class="pie">
+                <p>&copy; 2026 Sistema de Registro de Usuarios. Todos los derechos reservados.</p>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
