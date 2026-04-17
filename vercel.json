@@ -1,13 +1,8 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/guardar.php": {
-      "runtime": "vercel-php@0.7.1"
+    "users/**/*.js": {
+      "maxDuration": 30
     }
-  },
-  "routes": [
-    {
-      "src": "/guardar.php",
-      "dest": "/api/guardar.php"
-    }
-  ]
+  }
 }
