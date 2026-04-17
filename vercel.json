@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/guardar.php": {
+      "runtime": "vercel-php@0.7.1"
+    }
+  },
+  "routes": [
+    {
+      "src": "/guardar.php",
+      "dest": "/api/guardar.php"
+    }
+  ]
+}
